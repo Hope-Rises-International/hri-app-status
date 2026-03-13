@@ -248,9 +248,11 @@
   </div>
   <div class="kpi-row" id="kpiRow">
     <div class="kpi"><div class="kpi-value" id="kpiProjects">--</div><div class="kpi-label">Projects</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiDeployed">--</div><div class="kpi-label">Deployed</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiDeployed">--</div><div class="kpi-label">In Production</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiBuilders">--</div><div class="kpi-label">Builders</div></div>
     <div class="kpi"><div class="kpi-value" id="kpiLOC">--</div><div class="kpi-label">Lines of Code</div></div>
     <div class="kpi"><div class="kpi-value" id="kpiHours">--</div><div class="kpi-label">Human-Equiv Hours</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiCost">--</div><div class="kpi-label">HRI Invested</div></div>
     <div class="kpi"><div class="kpi-value" id="kpiValue">--</div><div class="kpi-label">Net Value</div></div>
   </div>
 </div>
@@ -275,10 +277,10 @@
           <th data-key="Project Title">Project <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Phase">Phase <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Last Builder">Builder <span class="sort-arrow">&#9650;</span></th>
-          <th data-key="Last Activity">Last Activity <span class="sort-arrow">&#9650;</span></th>
-          <th data-key="Next Up">Next Up <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Last Updated">Updated <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Total Lines of Code">LOC <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="$ for Human Equivalent">Ext. Value <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="$ HRI Internal Hours">HRI Cost <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Net Value">Net Value <span class="sort-arrow">&#9650;</span></th>
         </tr>
       </thead>
@@ -352,15 +354,22 @@
   // Populate KPIs
   function renderKPIs(projects) {
     const totalProjects = projects.length;
-    const deployed = projects.filter(p => classifyPhase(p['Phase']) === 'deployed').length;
+    const deployed = projects.filter(p => {
+      const cls = classifyPhase(p['Phase']);
+      return cls === 'deployed' || cls === 'stable';
+    }).length;
+    const builders = [...new Set(projects.map(p => p['Last Builder']).filter(Boolean).flatMap(b => b.split('/')))].length;
     const totalLOC = projects.reduce((s, p) => s + parseNum(p['Total Lines of Code']), 0);
     const totalHours = projects.reduce((s, p) => s + parseNum(p['Calculated Human Hours']), 0);
+    const totalCost = projects.reduce((s, p) => s + parseNum(p['$ HRI Internal Hours']), 0);
     const totalValue = projects.reduce((s, p) => s + parseNum(p['Net Value']), 0);
 
     document.getElementById('kpiProjects').textContent = totalProjects;
     document.getElementById('kpiDeployed').textContent = deployed;
+    document.getElementById('kpiBuilders').textContent = builders;
     document.getElementById('kpiLOC').textContent = formatNumber(totalLOC);
     document.getElementById('kpiHours').textContent = formatNumber(totalHours);
+    document.getElementById('kpiCost').textContent = formatCurrency(totalCost);
     document.getElementById('kpiValue').textContent = formatCurrency(totalValue);
   }
 
@@ -397,10 +406,10 @@
         '<td><strong>' + escapeHtml(p['Project Title']) + '</strong></td>' +
         '<td>' + phaseBadge(p['Phase']) + '</td>' +
         '<td>' + escapeHtml(p['Last Builder']) + '</td>' +
-        '<td>' + escapeHtml(p['Last Activity']) + '</td>' +
-        '<td>' + escapeHtml(p['Next Up']) + '</td>' +
         '<td>' + escapeHtml(p['Last Updated']) + '</td>' +
         '<td style="text-align:right">' + formatNumber(parseNum(p['Total Lines of Code'])) + '</td>' +
+        '<td style="text-align:right">' + escapeHtml(p['$ for Human Equivalent']) + '</td>' +
+        '<td style="text-align:right">' + escapeHtml(p['$ HRI Internal Hours']) + '</td>' +
         '<td style="text-align:right" class="value-positive">' + escapeHtml(p['Net Value']) + '</td>';
       tbody.appendChild(tr);
     });
