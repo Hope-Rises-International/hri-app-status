@@ -2,9 +2,13 @@
 
 ## About this project
 
-<!-- Replace this section with a brief description of what this project is,
-     how it's deployed, and what systems it connects to. Keep it to 5-10 lines.
-     This is the first thing a new session reads — make it count. -->
+**HRI Project Status Dashboard** — A single-page HTML dashboard that displays real-time status of all HRI Claude AI build projects. Reads from the Project Status Tracker spreadsheet (Sheet ID: `1KD7Zds9WlIQRubD2z7r2SmcTIWbIQCQtkfE713P88Ng`) via the Sheets Bridge `readAll` API.
+
+- **Stack:** Single-file HTML + CSS + vanilla JS (no build step)
+- **Data source:** Sheets Bridge API (`readAll` mode)
+- **Hosting:** GitHub Pages
+- **Launch point:** HRI Internal Portal (Data & Integration section)
+- **Start date:** 2026-02-27 (day count displayed on dashboard)
 
 ## Stack Learnings (canonical source)
 

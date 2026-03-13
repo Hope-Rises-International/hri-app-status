@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRI Project Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hri-teal: #1B4D5C;
+      --hri-teal-light: #2A6B7C;
+      --hri-gold: #C4963E;
+      --hri-rust: #C87941;
+      --hri-sage: #7A9A7E;
+      --hri-cream: #FDFCFA;
+      --hri-charcoal: #2C3E44;
+      --hri-light-teal: #E8F0F2;
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--hri-cream);
+      color: var(--hri-charcoal);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--hri-teal), var(--hri-teal-light));
+      color: white;
+      padding: 28px 32px 24px;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .header-subtitle {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+    .days-badge {
+      background: var(--hri-gold);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    /* KPI Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .kpi {
+      background: rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    /* Main content */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 24px 48px;
+    }
+
+    /* Pipeline section */
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: var(--hri-teal);
+    }
+    .pipeline {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .pipeline-stage {
+      flex: 1;
+      min-width: 120px;
+      background: white;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      border-top: 3px solid #ccc;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pipeline-stage.planning { border-top-color: var(--hri-light-teal); }
+    .pipeline-stage.building { border-top-color: var(--hri-gold); }
+    .pipeline-stage.deployed { border-top-color: var(--hri-sage); }
+    .pipeline-stage.stable { border-top-color: var(--hri-teal); }
+    .pipeline-count {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--hri-charcoal);
+    }
+    .pipeline-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
+    .pipeline-projects {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    /* Project table */
+    .table-wrap {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      overflow-x: auto;
+      margin-bottom: 28px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead {
+      background: var(--hri-teal);
+      color: white;
+    }
+    th {
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover { background: var(--hri-teal-light); }
+    th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+    th.sorted .sort-arrow { opacity: 1; }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      white-space: nowrap;
+    }
+    tr:hover td { background: #f8f9fa; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Status badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-deployed { background: #e8f5e9; color: #2e7d32; }
+    .badge-building { background: #fff8e1; color: #f57f17; }
+    .badge-planning { background: var(--hri-light-teal); color: var(--hri-teal); }
+    .badge-stable { background: #e3f2fd; color: #1565c0; }
+    .badge-complete { background: #f3e5f5; color: #7b1fa2; }
+
+    /* Value highlight */
+    .value-positive { color: #2e7d32; font-weight: 600; }
+
+    /* Loading & Error */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--hri-teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--hri-rust);
+      background: #fff3e0;
+      border-radius: var(--radius);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+      padding: 16px;
+    }
+    .footer a { color: var(--hri-teal); text-decoration: none; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header { padding: 20px 16px; }
+      .header h1 { font-size: 20px; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .main { padding: 16px; }
+      .pipeline { flex-direction: column; }
+      td, th { padding: 8px 10px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>HRI Project Dashboard</h1>
+      <div class="header-subtitle">Claude AI Build Program — Real-time Status</div>
+    </div>
+    <div class="days-badge" id="daysBadge">--</div>
+  </div>
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi"><div class="kpi-value" id="kpiProjects">--</div><div class="kpi-label">Projects</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiDeployed">--</div><div class="kpi-label">Deployed</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiLOC">--</div><div class="kpi-label">Lines of Code</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiHours">--</div><div class="kpi-label">Human-Equiv Hours</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiValue">--</div><div class="kpi-label">Net Value</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div id="pipelineSection" style="display:none;">
+    <div class="section-title">Build Pipeline</div>
+    <div class="pipeline" id="pipeline"></div>
+  </div>
+
+  <div class="section-title">All Projects</div>
+  <div class="table-wrap">
+    <div id="loadingState" class="loading">
+      <div class="loading-spinner"></div>
+      <div>Loading project data...</div>
+    </div>
+    <div id="errorState" class="error" style="display:none;"></div>
+    <table id="projectTable" style="display:none;">
+      <thead>
+        <tr>
+          <th data-key="Project #"># <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Project Title">Project <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Phase">Phase <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Last Builder">Builder <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Last Activity">Last Activity <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Next Up">Next Up <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Last Updated">Updated <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Total Lines of Code">LOC <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Net Value">Net Value <span class="sort-arrow">&#9650;</span></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Data from <a href="https://docs.google.com/spreadsheets/d/1KD7Zds9WlIQRubD2z7r2SmcTIWbIQCQtkfE713P88Ng/edit" target="_blank">Project Status Tracker</a>
+    &middot; Powered by HRI Sheets Bridge
+  </div>
+</div>
+
+<script>
+  const BRIDGE_URL = 'https://script.google.com/macros/s/AKfycbzen_jFFDULJQhj7rPK8khEopSRR1YIusTDqI7dpQPrefdi7Lxcv_J5UimlolVg49i-vQ/exec';
+  const API_KEY = 'b3317d76-a5f3-4657-9881-6f087455173d';
+  const SHEET_ID = '1KD7Zds9WlIQRubD2z7r2SmcTIWbIQCQtkfE713P88Ng';
+  const START_DATE = new Date('2026-02-27');
+
+  let allProjects = [];
+  let sortKey = 'Project #';
+  let sortAsc = true;
+
+  // Days counter
+  function updateDays() {
+    const now = new Date();
+    const diff = Math.floor((now - START_DATE) / 86400000);
+    document.getElementById('daysBadge').textContent = 'Day ' + diff;
+  }
+
+  // Parse currency/number strings
+  function parseNum(val) {
+    if (!val) return 0;
+    return parseFloat(String(val).replace(/[$,]/g, '')) || 0;
+  }
+
+  function formatCurrency(n) {
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function formatNumber(n) {
+    return Math.round(n).toLocaleString();
+  }
+
+  // Classify phase into pipeline stage
+  function classifyPhase(phase) {
+    const p = (phase || '').toLowerCase();
+    if (p.includes('planning')) return 'planning';
+    if (p.includes('development') || p.includes('building')) return 'building';
+    if (p.includes('deployed')) return 'deployed';
+    if (p.includes('stable') || p.includes('complete')) return 'stable';
+    return 'deployed';
+  }
+
+  // Phase badge
+  function phaseBadge(phase) {
+    const cls = classifyPhase(phase);
+    const map = { planning: 'badge-planning', building: 'badge-building', deployed: 'badge-deployed', stable: 'badge-stable', complete: 'badge-complete' };
+    const p = (phase || '').toLowerCase();
+    let badgeClass = map[cls] || 'badge-deployed';
+    if (p.includes('complete')) badgeClass = 'badge-complete';
+    return '<span class="badge ' + badgeClass + '">' + escapeHtml(phase) + '</span>';
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+
+  // Populate KPIs
+  function renderKPIs(projects) {
+    const totalProjects = projects.length;
+    const deployed = projects.filter(p => classifyPhase(p['Phase']) === 'deployed').length;
+    const totalLOC = projects.reduce((s, p) => s + parseNum(p['Total Lines of Code']), 0);
+    const totalHours = projects.reduce((s, p) => s + parseNum(p['Calculated Human Hours']), 0);
+    const totalValue = projects.reduce((s, p) => s + parseNum(p['Net Value']), 0);
+
+    document.getElementById('kpiProjects').textContent = totalProjects;
+    document.getElementById('kpiDeployed').textContent = deployed;
+    document.getElementById('kpiLOC').textContent = formatNumber(totalLOC);
+    document.getElementById('kpiHours').textContent = formatNumber(totalHours);
+    document.getElementById('kpiValue').textContent = formatCurrency(totalValue);
+  }
+
+  // Pipeline
+  function renderPipeline(projects) {
+    const stages = { planning: [], building: [], deployed: [], stable: [] };
+    const labels = { planning: 'Planning', building: 'In Development', deployed: 'Deployed', stable: 'Stable / Complete' };
+    projects.forEach(p => {
+      const cls = classifyPhase(p['Phase']);
+      if (stages[cls]) stages[cls].push(p['Project Title']);
+    });
+
+    const container = document.getElementById('pipeline');
+    container.innerHTML = '';
+    for (const [key, label] of Object.entries(labels)) {
+      const div = document.createElement('div');
+      div.className = 'pipeline-stage ' + key;
+      div.innerHTML = '<div class="pipeline-count">' + stages[key].length + '</div>' +
+        '<div class="pipeline-label">' + label + '</div>' +
+        '<div class="pipeline-projects">' + stages[key].map(escapeHtml).join('<br>') + '</div>';
+      container.appendChild(div);
+    }
+    document.getElementById('pipelineSection').style.display = '';
+  }
+
+  // Table
+  function renderTable(projects) {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    projects.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + escapeHtml(p['Project #']) + '</td>' +
+        '<td><strong>' + escapeHtml(p['Project Title']) + '</strong></td>' +
+        '<td>' + phaseBadge(p['Phase']) + '</td>' +
+        '<td>' + escapeHtml(p['Last Builder']) + '</td>' +
+        '<td>' + escapeHtml(p['Last Activity']) + '</td>' +
+        '<td>' + escapeHtml(p['Next Up']) + '</td>' +
+        '<td>' + escapeHtml(p['Last Updated']) + '</td>' +
+        '<td style="text-align:right">' + formatNumber(parseNum(p['Total Lines of Code'])) + '</td>' +
+        '<td style="text-align:right" class="value-positive">' + escapeHtml(p['Net Value']) + '</td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('projectTable').style.display = '';
+  }
+
+  // Sorting
+  function sortProjects(key) {
+    if (sortKey === key) {
+      sortAsc = !sortAsc;
+    } else {
+      sortKey = key;
+      sortAsc = true;
+    }
+
+    // Update header indicators
+    document.querySelectorAll('th').forEach(th => {
+      th.classList.remove('sorted');
+      const arrow = th.querySelector('.sort-arrow');
+      if (arrow) arrow.innerHTML = '&#9650;';
+    });
+    const activeTh = document.querySelector('th[data-key="' + key + '"]');
+    if (activeTh) {
+      activeTh.classList.add('sorted');
+      const arrow = activeTh.querySelector('.sort-arrow');
+      if (arrow) arrow.innerHTML = sortAsc ? '&#9650;' : '&#9660;';
+    }
+
+    const numericKeys = ['Project #', 'Total Lines of Code', 'Calculated Human Hours', 'Net Value', '$ for Human Equivalent', '$ HRI Internal Hours'];
+    const isNumeric = numericKeys.includes(key);
+
+    allProjects.sort((a, b) => {
+      let va = a[key] || '';
+      let vb = b[key] || '';
+      if (isNumeric) {
+        va = parseNum(va);
+        vb = parseNum(vb);
+        return sortAsc ? va - vb : vb - va;
+      }
+      va = String(va).toLowerCase();
+      vb = String(vb).toLowerCase();
+      if (va < vb) return sortAsc ? -1 : 1;
+      if (va > vb) return sortAsc ? 1 : -1;
+      return 0;
+    });
+
+    renderTable(allProjects);
+  }
+
+  // Header click handlers
+  document.querySelectorAll('th[data-key]').forEach(th => {
+    th.addEventListener('click', () => sortProjects(th.dataset.key));
+  });
+
+  // Fetch data
+  async function loadData() {
+    try {
+      const resp = await fetch(BRIDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          apiKey: API_KEY,
+          sheetId: SHEET_ID,
+          operations: [{ tab: 'Active', mode: 'readAll' }]
+        })
+      });
+
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+      const data = await resp.json();
+      if (!data.success) throw new Error(data.error || 'API error');
+
+      const result = data.results[0];
+      if (result.action === 'error') throw new Error(result.error);
+
+      allProjects = result.data;
+      document.getElementById('loadingState').style.display = 'none';
+      renderKPIs(allProjects);
+      renderPipeline(allProjects);
+      sortProjects('Project #');
+
+    } catch (err) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = '';
+      document.getElementById('errorState').textContent = 'Failed to load data: ' + err.message;
+      console.error('Dashboard load error:', err);
+    }
+  }
+
+  updateDays();
+  loadData();
+</script>
+
+</body>
+</html>
