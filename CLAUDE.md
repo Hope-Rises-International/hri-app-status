@@ -22,17 +22,12 @@ Do NOT create a local `learnings.md` or `hri-stack-learnings.md` in this repo. I
 
 ## Project knowledge
 
-<!-- This section grows over time. Every session that makes meaningful changes
-     should append what it learned. This is where compound value accrues.
-
-     Good entries answer: What would the NEXT session need to know?
-     - Decisions made and WHY (not just what changed — git log has that)
-     - Things that are fragile or non-obvious
-     - What was tried and didn't work (so nobody tries it again)
-     - Patterns discovered in the data or the APIs
-     - Gotchas that aren't obvious from reading the code
-
-     Bad entries: "Updated foo.py" (that's a commit message, not knowledge) -->
+**[2026-03-13 | Bill | Initial dashboard build]**
+- **Decided:** GitHub Pages hosting (not Apps Script) because the dashboard is read-only HTML with no server-side logic or domain restriction needed. Simpler deploy model (push to main) vs clasp ceremony. Can migrate to Apps Script later if domain restriction becomes necessary.
+- **Decided:** Data fetched live from Sheets Bridge `readAll` mode on each page load. For 12-15 rows this is instant. The API key is exposed in client-side JS — acceptable because the bridge is read/write but the key is already shared across all HRI repos.
+- **Changed:** Dashboard live at `https://hope-rises-international.github.io/hri-app-status/`. Added as tool card in Internal Portal (Data & Integration section, badge-live).
+- **Watch out:** The `fetch()` call uses `Content-Type: text/plain` (not `application/json`) to avoid CORS preflight on the Apps Script endpoint. If this stops working, check CORS behavior on the Sheets Bridge.
+- **Watch out:** The Sheets Bridge endpoint requires `ANYONE_ANONYMOUS` access in `appsscript.json` for browser-based fetch calls to work. If the bridge is redeployed with `ANYONE`, the dashboard will break with 401.
 
 ---
 
