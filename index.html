@@ -66,10 +66,11 @@
       gap: 12px;
     }
     .kpi {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.10);
       border-radius: var(--radius);
       padding: 14px 16px;
       text-align: center;
+      border-bottom: 3px solid transparent;
     }
     .kpi-value {
       font-size: 26px;
@@ -80,9 +81,19 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      opacity: 0.8;
+      opacity: 0.75;
       margin-top: 4px;
     }
+    .kpi-gold .kpi-value { color: #F0C060; }
+    .kpi-gold { border-bottom-color: #F0C060; }
+    .kpi-sage .kpi-value { color: #A8D4AC; }
+    .kpi-sage { border-bottom-color: #A8D4AC; }
+    .kpi-white .kpi-value { color: #fff; }
+    .kpi-white { border-bottom-color: rgba(255,255,255,0.3); }
+    .kpi-cream .kpi-value { color: #FFE8C8; }
+    .kpi-cream { border-bottom-color: #FFE8C8; }
+    .kpi-light .kpi-value { color: #B8E0F0; }
+    .kpi-light { border-bottom-color: #B8E0F0; }
 
     /* Main content */
     .main {
@@ -247,13 +258,13 @@
     <div class="days-badge" id="daysBadge">--</div>
   </div>
   <div class="kpi-row" id="kpiRow">
-    <div class="kpi"><div class="kpi-value" id="kpiProjects">--</div><div class="kpi-label">Projects</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiDeployed">--</div><div class="kpi-label">In Production</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiBuilders">--</div><div class="kpi-label">Builders</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiLOC">--</div><div class="kpi-label">Lines of Code</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiHours">--</div><div class="kpi-label">Human-Equiv Hours</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiCost">--</div><div class="kpi-label">HRI Invested</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiValue">--</div><div class="kpi-label">Net Value</div></div>
+    <div class="kpi kpi-white"><div class="kpi-value" id="kpiProjects">--</div><div class="kpi-label">Projects</div></div>
+    <div class="kpi kpi-sage"><div class="kpi-value" id="kpiDeployed">--</div><div class="kpi-label">In Production</div></div>
+    <div class="kpi kpi-light"><div class="kpi-value" id="kpiBuilders">--</div><div class="kpi-label">Builders</div></div>
+    <div class="kpi kpi-white"><div class="kpi-value" id="kpiLOC">--</div><div class="kpi-label">Lines of Code</div></div>
+    <div class="kpi kpi-cream"><div class="kpi-value" id="kpiHours">--</div><div class="kpi-label">Human-Equiv Hours</div></div>
+    <div class="kpi kpi-gold"><div class="kpi-value" id="kpiCost">--</div><div class="kpi-label">HRI Invested</div></div>
+    <div class="kpi kpi-sage"><div class="kpi-value" id="kpiValue">--</div><div class="kpi-label">Net Value</div></div>
   </div>
 </div>
 
@@ -277,11 +288,11 @@
           <th data-key="Project Title">Project <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Phase">Phase <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Last Builder">Builder <span class="sort-arrow">&#9650;</span></th>
-          <th data-key="Last Updated">Updated <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Total Lines of Code">LOC <span class="sort-arrow">&#9650;</span></th>
           <th data-key="$ for Human Equivalent">Ext. Value <span class="sort-arrow">&#9650;</span></th>
           <th data-key="$ HRI Internal Hours">HRI Cost <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Net Value">Net Value <span class="sort-arrow">&#9650;</span></th>
+          <th data-key="Last Updated">Updated <span class="sort-arrow">&#9650;</span></th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -406,11 +417,11 @@
         '<td><strong>' + escapeHtml(p['Project Title']) + '</strong></td>' +
         '<td>' + phaseBadge(p['Phase']) + '</td>' +
         '<td>' + escapeHtml(p['Last Builder']) + '</td>' +
-        '<td>' + escapeHtml(p['Last Updated']) + '</td>' +
         '<td style="text-align:right">' + formatNumber(parseNum(p['Total Lines of Code'])) + '</td>' +
         '<td style="text-align:right">' + escapeHtml(p['$ for Human Equivalent']) + '</td>' +
         '<td style="text-align:right">' + escapeHtml(p['$ HRI Internal Hours']) + '</td>' +
-        '<td style="text-align:right" class="value-positive">' + escapeHtml(p['Net Value']) + '</td>';
+        '<td style="text-align:right" class="value-positive">' + escapeHtml(p['Net Value']) + '</td>' +
+        '<td>' + escapeHtml(p['Last Updated']) + '</td>';
       tbody.appendChild(tr);
     });
     document.getElementById('projectTable').style.display = '';
