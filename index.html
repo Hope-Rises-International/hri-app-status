@@ -228,6 +228,29 @@
     }
 
     /* Footer */
+    /* Methodology box */
+    .methodology {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      border-left: 4px solid var(--hri-gold);
+    }
+    .methodology-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--hri-teal);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 10px;
+    }
+    .methodology p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #555;
+    }
+
     .footer {
       text-align: center;
       font-size: 11px;
@@ -287,7 +310,6 @@
           <th data-key="Project #"># <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Project Title">Project <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Phase">Phase <span class="sort-arrow">&#9650;</span></th>
-          <th data-key="Last Builder">Builder <span class="sort-arrow">&#9650;</span></th>
           <th data-key="Total Lines of Code">LOC <span class="sort-arrow">&#9650;</span></th>
           <th data-key="$ for Human Equivalent">Ext. Value <span class="sort-arrow">&#9650;</span></th>
           <th data-key="$ HRI Internal Hours">HRI Cost <span class="sort-arrow">&#9650;</span></th>
@@ -297,6 +319,11 @@
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
+  </div>
+
+  <div class="methodology">
+    <div class="methodology-title">External Value Estimation Methodology</div>
+    <p>External value is estimated using two industry-standard benchmarks: developer productivity of 50–80 lines of production code per day (consistent with research by Capers Jones and McConnell across thousands of projects), and a mid-market US hourly rate of $100–$125 for developers with the required specializations in Salesforce, Google Cloud, and web application development. These assumptions are conservative — they use the high end of productivity estimates (which lowers the hour count) and the mid-range of market rates (Salesforce consultants routinely bill $125–$175/hr). The estimate also excludes requirements gathering, project management, vendor selection, and ongoing maintenance, which typically add 30–50% to any contracted engagement. Using these inputs, the realistic cost range for this body of work if contracted externally is $250,000 (conservative: high productivity, base rate) to $600,000+ (realistic: mid-range productivity, market rate with project management overhead).</p>
   </div>
 
   <div class="footer">
@@ -416,7 +443,6 @@
         '<td>' + escapeHtml(p['Project #']) + '</td>' +
         '<td><strong>' + escapeHtml(p['Project Title']) + '</strong></td>' +
         '<td>' + phaseBadge(p['Phase']) + '</td>' +
-        '<td>' + escapeHtml(p['Last Builder']) + '</td>' +
         '<td style="text-align:right">' + formatNumber(parseNum(p['Total Lines of Code'])) + '</td>' +
         '<td style="text-align:right">' + escapeHtml(p['$ for Human Equivalent']) + '</td>' +
         '<td style="text-align:right">' + escapeHtml(p['$ HRI Internal Hours']) + '</td>' +
