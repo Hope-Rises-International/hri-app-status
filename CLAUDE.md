@@ -29,6 +29,11 @@ Do NOT create a local `learnings.md` or `hri-stack-learnings.md` in this repo. I
 - **Watch out:** The `fetch()` call uses `Content-Type: text/plain` (not `application/json`) to avoid CORS preflight on the Apps Script endpoint. If this stops working, check CORS behavior on the Sheets Bridge.
 - **Watch out:** The Sheets Bridge endpoint requires `ANYONE_ANONYMOUS` access in `appsscript.json` for browser-based fetch calls to work. If the bridge is redeployed with `ANYONE`, the dashboard will break with 401.
 
+**[2026-04-03 | Bill | Dashboard display fixes]**
+- **Decided:** Pipeline boxes show count + label only — project name lists removed since deployed count is growing and names aren't useful at that scale.
+- **Changed:** Five fixes: (1) pipeline boxes simplified, (2) classifyPhase now handles "Not Started" and unknown phases as planning instead of deployed, (3) default sort is Net Value descending, (4) all value columns use formatCurrency() for consistent $ signs, (5) date column renders as MMDDYY format.
+- **Watch out:** classifyPhase checks order matters — "stable/complete" must be checked before "deployed/live" since "Live and Deployed" should match deployed, not get caught by a substring match on "live" alone.
+
 ---
 
 ## Session Start
