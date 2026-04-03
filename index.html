@@ -363,14 +363,24 @@
     return Math.round(n).toLocaleString();
   }
 
+  function formatDate(val) {
+    if (!val) return '';
+    const d = new Date(val);
+    if (isNaN(d)) return escapeHtml(val);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    return mm + dd + yy;
+  }
+
   // Classify phase into pipeline stage
   function classifyPhase(phase) {
     const p = (phase || '').toLowerCase();
-    if (p.includes('planning')) return 'planning';
+    if (p.includes('planning') || p.includes('not started')) return 'planning';
     if (p.includes('development') || p.includes('building')) return 'building';
-    if (p.includes('deployed')) return 'deployed';
     if (p.includes('stable') || p.includes('complete')) return 'stable';
-    return 'deployed';
+    if (p.includes('deployed') || p.includes('live')) return 'deployed';
+    return 'planning';
   }
 
   // Phase badge
@@ -426,8 +436,7 @@
       const div = document.createElement('div');
       div.className = 'pipeline-stage ' + key;
       div.innerHTML = '<div class="pipeline-count">' + stages[key].length + '</div>' +
-        '<div class="pipeline-label">' + label + '</div>' +
-        '<div class="pipeline-projects">' + stages[key].map(escapeHtml).join('<br>') + '</div>';
+        '<div class="pipeline-label">' + label + '</div>';
       container.appendChild(div);
     }
     document.getElementById('pipelineSection').style.display = '';
@@ -444,10 +453,10 @@
         '<td><strong>' + escapeHtml(p['Project Title']) + '</strong></td>' +
         '<td>' + phaseBadge(p['Phase']) + '</td>' +
         '<td style="text-align:right">' + formatNumber(parseNum(p['Total Lines of Code'])) + '</td>' +
-        '<td style="text-align:right">' + escapeHtml(p['$ for Human Equivalent']) + '</td>' +
-        '<td style="text-align:right">' + escapeHtml(p['$ HRI Internal Hours']) + '</td>' +
-        '<td style="text-align:right" class="value-positive">' + escapeHtml(p['Net Value']) + '</td>' +
-        '<td>' + escapeHtml(p['Last Updated']) + '</td>';
+        '<td style="text-align:right">' + formatCurrency(parseNum(p['$ for Human Equivalent'])) + '</td>' +
+        '<td style="text-align:right">' + formatCurrency(parseNum(p['$ HRI Internal Hours'])) + '</td>' +
+        '<td style="text-align:right" class="value-positive">' + formatCurrency(parseNum(p['Net Value'])) + '</td>' +
+        '<td>' + formatDate(p['Last Updated']) + '</td>';
       tbody.appendChild(tr);
     });
     document.getElementById('projectTable').style.display = '';
@@ -526,7 +535,10 @@
       document.getElementById('loadingState').style.display = 'none';
       renderKPIs(allProjects);
       renderPipeline(allProjects);
-      sortProjects('Project #');
+      // Default sort: Net Value descending (set to asc so sortProjects toggles to desc)
+      sortKey = 'Net Value';
+      sortAsc = true;
+      sortProjects('Net Value');
 
     } catch (err) {
       document.getElementById('loadingState').style.display = 'none';
