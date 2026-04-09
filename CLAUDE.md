@@ -20,7 +20,8 @@ This project authenticates via GCP service account impersonation. All API calls
 Developers authenticate with their own @hoperises.org account and impersonate
 the service account. Setup:
 
-    gcloud auth application-default login       --impersonate-service-account hri-sfdc-sync@hri-receipt-automation.iam.gserviceaccount.com
+    gcloud auth application-default login \
+      --impersonate-service-account hri-sfdc-sync@hri-receipt-automation.iam.gserviceaccount.com
 
 Do NOT use personal ADC (`gcloud auth application-default login` without
 impersonation). Do NOT create or download service account key files.
